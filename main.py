@@ -104,10 +104,10 @@ while in_game:
   # We'll deal with the score of 21 tie condition.
   if pscore > 21:
     print(f"Dealer's hand: {dhand}, dealer score: {dscore}")
-    print(f"Your score is {pscore}, which is BUST, YOU LOSE...\n")
+    print(f"Your score is {pscore}, which is BUST, YOU LOSE...😫\n")
   elif pscore == 21:
     print(f"Dealer's hand: {dhand}, dealer score: {dscore}")
-    print("You got Blackjack! YOU WIN!!!")
+    print("You got Blackjack! YOU WIN!!!😄🎉🏆")
     #Dealer module
     #Compare module
   else:
@@ -119,15 +119,15 @@ while in_game:
     print(f"Dealer's hand: {dhand}, dealer score: {dscore}")
     #Compare module
     if dscore > 21:
-      print("Dealer BUST, You win!\n")
+      print("Dealer BUST, You win!🎉\n")
     elif dscore == 21:
-      print("Dealer got Blackjack, You LOSE...\n")
+      print("Dealer got Blackjack, You LOSE...😫\n")
     elif dscore <21 and dscore > pscore:
-      print(f"Your score is {pscore}, You LOSE...\n")
+      print(f"Your score is {pscore}, You LOSE...😫\n")
     elif dscore == pscore:
-      print("It's a tie.\n")
+      print("It's a tie.🤣\n")
     elif dscore < pscore:
-      print(f"Your score is {pscore}, YOU WIN!!!!\n")
+      print(f"Your score is {pscore}, YOU WIN!!!!🎉\n")
   
   play_again = input("Play again? Type 'Y' or 'N': ").lower()
   if play_again == 'y':
