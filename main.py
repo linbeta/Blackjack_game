@@ -20,129 +20,148 @@ from poker_deck import deck_score
 import random
 from replit import clear
 
-print(art.logo)
-def start():
-  play_game = input("Do you want to play Blackjack? Type 'Y' or 'N': ").lower()
+
+# Declatre a function deal() that computer deal a card to player or computer.
+def deal():
+  """Deal a random card from the deck."""
+  card = random.choice(deck_list)
+  return card
+
+# Declare a function to get the initial score_list of the cards.
+def score(card_list):
+  """This funciton takes an input parameter "cards_list", which could be assigned in player_cards or dealer_cards. The return value is called 'score_list', which could be stored in player_score list or dealer_score list."""
+  score_list = []
+  for i in range(len(card_list)):
+    # Notice: deck_score is a dictionary, we get the card scores in the deck using the card string as the key.
+    score = deck_score[card_list[i]]
+    score_list.append(score)
+  return score_list
+
+# Declare another function to sum up a score_list's score
+def total_score(score_list):
+  """Use this function to sum up the scores."""
+  return sum(score_list)
+
+# Declare a function to let user decide whether to add a card or not. 
+def Hit_or_Stand():
+  player_choice = input("Enter 'H' to hit a card, or type 'S' to stand: ").lower()
+  if player_choice == 'h':
+    return True
+  elif player_choice == 's':
+    return False
+  else:
+    print("Invalid input, please enter your choice again. :)")
+    return Hit_or_Stand()
+  
+# Declare a funtion which could change the score of Ace when bust. ####TODO
+def swap_Ace_score():
+  return 
+
+def play():
+  """Ask user play or not, or if play again."""
+  play_game = input("Do you want to play Blckjack? Type 'Y' or 'N': ").lower()
   if play_game == 'y':
     return True
   elif play_game == 'n':
     return False
   else:
-    print("Invalid input, please choose again.")
-    start()
+    return play()
 
-in_game = start()
+####Code of Game display starts here!!!####    
+print(art.logo)
+#Do you want to play Blackjack?
+play_blackjack = play()
+while play_blackjack:
+  # Game start:
+  # Create two lists to store the user and dealer's hands.
+  player_cards = []
+  player_score_list = []
+  dealer_cards = []
+  dealer_score_list = []
 
-while in_game:
-  # Game start, hands delt and show player and computer/dealer's hand.
-  pcard1 = random.choice(deck_list)
-  pcard2 = random.choice(deck_list)
-  phand = [pcard1, pcard2]
-  pscore = deck_score[pcard1] + deck_score[pcard2]
+  # Deal 2 cards to the user.
+  for _ in range(2):
+    new_card = deal()
+    player_cards.append(new_card)
 
-  #Make one of the Dealer's card hidden
-  dcard_H = random.choice(deck_list)
-  dcard1 = random.choice(deck_list)
-  dhand = ["*", dcard1]
-  dscore = deck_score[dcard_H] + deck_score[dcard1]
+  # Deal 2 cards to the dealer, show one and hide one card.
+  for _ in range(2):
+    new_card = deal()
+    dealer_cards.append(new_card)
 
-  print(f"Your hand: {phand}, current score: {pscore}")
-  if pscore == 21 and len(phand) == 2:
+  player_score_list = score(player_cards)
+  player_score = total_score(player_score_list)
+  #  Show player's hand info:
+  #Check if player got Blackjack or 2 Aces?
+  if player_score == 22:
+    player_score_list.remove(11).append(1)
+  print(f"Your cards: {player_cards}, current score: {player_score}")
+  if player_score == 21:
     print("Blackjack!")
-  elif pscore > 21:
-    pscore -= 10
-  #Dealer's card  
-  print(f"Dealer's hand: {dhand}")
-
-  #Ask player HIT or STAND
-  def HorS():
-    if pscore == 21:
-      return False
-    else:
-      player_choice = input("Enter 'H' for hit, type 'S' for stand: ").lower()
-      if player_choice == 'h':
-        return True
-      else:
-        return False
-
-
-  # the return value of HorS() will store in variable deal, and that's a key whether the deal module will execute or not.
-  deal = HorS()
-  # print(deal)
-
-  # Player module
-  while deal:
-    pcard_new = random.choice(deck_list)
-    phand.append(pcard_new)
-    pscore += deck_score[pcard_new]
-    #Use this line to show player's current hand and acore:
-    print(f"Your hand: {phand}, current score: {pscore}")
-    if pscore == 21:
-      print("Blackjack!")
-      deal = False
-    elif pscore > 21:
-      # Make Ace score count as 11 or 1
-      if deck_score[pcard1] == 11 or deck_score[pcard2] == 11:
-        pscore -= 10
-      elif deck_score[pcard_new] == 11:
-        pscore -= 10
-      ###TODO: Need to work on another statement if there's an Ace in the phand list.###
-      # elif 
-      # Otherwise when there's no Aces
-      else:
-        print("Bust!")
-        deal = False
-    else:
-      deal = HorS()
-
-  # print("Wait for computer and compare.")
-  # Computer / Dealer module
-  dhand = [dcard_H, dcard1]
-  # print(f"Dealer's hand: {dhand}, dealer score: {dscore}")
-
-  # note: when pscore == 21, count as player wins.
-  # We'll deal with the score of 21 tie condition.
-  if pscore > 21:
-    print(f"Dealer's hand: {dhand}, dealer score: {dscore}")
-    print(f"Your score is {pscore}, which is BUST, YOU LOSE...😫\n")
-  elif pscore == 21:
-    print(f"Dealer's hand: {dhand}, dealer score: {dscore}")
-    print("You got Blackjack! YOU WIN!!!😄🎉🏆")
-    #Dealer module
-    #Compare module
+    ##TODO: jump to end of game
   else:
-    #Dealer module
-    while dscore < 17:
-      dcard_new = random.choice(deck_list)
-      dhand.append(dcard_new)
-      dscore += deck_score[dcard_new]
-    print(f"Dealer's hand: {dhand}, dealer score: {dscore}")
-    #Compare module
-    if dscore > 21:
-      print("Dealer BUST, You win!🎉\n")
-    elif dscore == 21:
-      print("Dealer got Blackjack, You LOSE...😫\n")
-    elif dscore <21 and dscore > pscore:
-      print(f"Your score is {pscore}, You LOSE...😫\n")
-    elif dscore == pscore:
-      print("It's a tie.🤣\n")
-    elif dscore < pscore:
-      print(f"Your score is {pscore}, YOU WIN!!!!🎉\n")
-  
-  play_again = input("Play again? Type 'Y' or 'N': ").lower()
-  if play_again == 'y':
-    in_game = True
-    clear()
-    print(art.logo)
-  elif play_again == 'n':
-    in_game = False
+    print(f"Dealer's cards: [{dealer_cards[0]}, ***]")
+
+  # Player make choice, deal cards, and calculate the scores:
+  Hit = Hit_or_Stand()
+  while Hit:
+    new_card = deal()
+    player_cards.append(new_card)
+    player_score_list = score(player_cards)
+    player_score = total_score(player_score_list)
+    ##TODO: Ace condition
+    if player_score > 21 and 11 in player_score_list:
+      player_score_list.remove(11)
+      player_score_list.append(1)
+      player_score = total_score(player_score_list)
+    print(f"Your cards: {player_cards}, current score: {player_score}")
+    if player_score >21:
+      print("BUST")
+      Hit = False
+    elif player_score == 21:
+      print("You Got 21")
+      Hit = False
+    else:
+      Hit = Hit_or_Stand()
+
+  print("It's Dealer's turn...")
+  ## Dealer's hand auto deal:
+  dealer_score_list = score(dealer_cards)
+  dealer_score = total_score(dealer_score_list)
+  if player_score == 21:
+    #Show both cards & score, then declare player wins!
+    print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}")
+    print("You Win! 🎉 🏆 😄\n")
+  elif player_score >21:
+    print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}\nYou Lose...😢\n")
   else:
-    print("Invalid input.")
-    in_game = False
+    ## Compare and show results
+    if dealer_score == 21:
+      print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}\nDealer got Blackjack! You Lose...😢\n")
+    else:
+      while dealer_score < player_score:
+        new_card = deal()
+        dealer_cards.append(new_card)
+        dealer_score_list = score(dealer_cards)
+        dealer_score = total_score(dealer_score_list)
+        #Check if there's Ace?
+        if dealer_score > 21:
+          if 11 in dealer_score_list:
+            dealer_score_list.remove(11)
+            dealer_score_list.append(1)
+            dealer_score = total_score(dealer_score_list)
+            print(f"Dealer's score: {dealer_scre}")
+          else:
+            print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}\nDealer BUST! You Win! 🎉 🏆 😄\n")
+            ##Jump out to the end
+      if dealer_score == player_score:
+        print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}\nIt's a tie. 🤣\n")
+      elif dealer_score < 21:
+        print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}\nDealer got higher score. You Lose...😢\n")
+
+  play_blackjack = play()
+  clear()
+  print(art.logo)
 
 clear()
 print("Goodbye~")
-
-# Questions:
-# Ace condition debug: How to optimize the usage of Ace?
-# eg. Your hand: ['2_D', '5_S', 'Ace_D', '2_C', '9_S'], current score: 29
