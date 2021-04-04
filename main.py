@@ -53,18 +53,21 @@ def Hit_or_Stand():
     print("Invalid input, please enter your choice again. :)")
     return Hit_or_Stand()
   
-# Declare a funtion which could change the score of Ace when bust. ####TODO
-def swap_Ace_score():
-  return 
+# Declare a funtion which could change the score of Ace when bust.
+def swap_Ace_score(score_list):
+  score_list.remove(11)
+  score_list.append(1)
+  return score_list
 
 def play():
-  """Ask user play or not, or if play again."""
+  """Ask user play or not, or if user wants to play again."""
   play_game = input("Do you want to play Blckjack? Type 'Y' or 'N': ").lower()
   if play_game == 'y':
     return True
   elif play_game == 'n':
     return False
   else:
+    print("Invalid input, please choose again. :)")
     return play()
 
 ####Code of Game display starts here!!!####    
@@ -94,26 +97,25 @@ while play_blackjack:
   #  Show player's hand info:
   #Check if player got Blackjack or 2 Aces?
   if player_score == 22:
-    player_score_list.remove(11).append(1)
+    player_score_list = swap_Ace_score(player_score_list)
+    player_score = sum(player_score_list)
   print(f"Your cards: {player_cards}, current score: {player_score}")
   if player_score == 21:
-    print("Blackjack! You Win!  🎉 🏆 😄\n")
-    ### TODO: Bypass the rest of codes and restart###
-  else:
-    print(f"Dealer's cards: [{dealer_cards[0]}, ***]")
+    print("Blackjack!")
+
+  print(f"Dealer's cards: [{dealer_cards[0]}, ***]")
 
   # Player make choice, deal cards, and calculate the scores:
   Hit = Hit_or_Stand()
   while Hit:
     new_card = deal()
     player_cards.append(new_card)
-    player_score_list = score(player_cards)
+    player_score_list.append(deck_score[new_card])
     player_score = total_score(player_score_list)
-    ##TODO: Ace condition
+    # Ace condition
     if player_score > 21:
       if 11 in player_score_list:
-        player_score_list.remove(11)
-        player_score_list.append(1)
+        swap_Ace_score(player_score_list)
         player_score = total_score(player_score_list)
         print(f"Your cards: {player_cards}, current score: {player_score}")
         Hit = Hit_or_Stand()
@@ -141,7 +143,10 @@ while play_blackjack:
     if dealer_score == 21:
       print("Dealer got Blackjack! You Lose...😢\n")
     else:
-      print("You Win! 🎉 🏆 😄\n")
+      if len(player_cards) == 2: 
+        print("You got Blackjack! You Win! 🎉 🏆 😄\n")
+      else:
+        print("You got higher score, You Win! 🎉 🏆 😄\n")
   elif player_score >21:
     print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}\nYou Lose...😢\n")
   else:
@@ -152,22 +157,20 @@ while play_blackjack:
       while dealer_score < player_score:
         new_card = deal()
         dealer_cards.append(new_card)
-        dealer_score_list = score(dealer_cards)
+        dealer_score_list.append(deck_score[new_card])
         dealer_score = total_score(dealer_score_list)
         #Check if there's Ace?
         if dealer_score > 21 and 11 in dealer_score_list:
-          dealer_score_list.remove(11)
-          dealer_score_list.append(1)
+          swap_Ace_score(dealer_score_list)
           dealer_score = total_score(dealer_score_list)
-          ####TODO: Bug's here!!!####
-          print(f"(Ace)Dealer's cards: {dealer_cards}")
-        elif dealer_score > 21:
-          print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}\nDealer BUST! You Win! 🎉 🏆 😄\n")
-            ##Jump out to the end
+
+      print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}")
       if dealer_score == player_score:
-        print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}\nIt's a tie. 🤣\n")
-      elif dealer_score < 21:
-        print(f"Dealer's cards: {dealer_cards}, dealer's score: {dealer_score}\nDealer got higher score. You Lose...😢\n")
+        print("It's a tie. 🤣\n")
+      elif dealer_score < 21 or dealer_score == 21:
+        print("Dealer got higher score. You Lose...😢\n")
+      elif dealer_score > 21:
+        print("Dealer BUST! You Win! 🎉 🏆 😄\n")
 
   play_blackjack = play()
   clear()
